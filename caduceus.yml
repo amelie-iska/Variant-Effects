@@ -1,0 +1,11 @@
+name: caduceus
+channels:
+  - pytorch
+  - anaconda
+  - nvidia
+  - defaults
+dependencies:
+  - cuda-nvcc=11.7.99
+  - pip=23.3.1
+  - python=3.8
+  - pytorch-cuda=12.1
