@@ -1,16 +1,18 @@
+from stripedhyena.tokenizer import CharLevelTokenizer
 import argparse
-from transformers import AutoModelForMaskedLM, AutoTokenizer
+from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM
 import torch
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
 
 # Add command-line arguments
-parser = argparse.ArgumentParser(description="Process DNA sequences using Caduceus model.")
+parser = argparse.ArgumentParser(description="Process DNA sequences using Evo model.")
 parser.add_argument("--interval", type=str, required=True, help="Interval range for residues in the format [A-B]")
 parser.add_argument("--fasta_file", type=str, required=True, help="Path to the input FASTA file")
 parser.add_argument("--mutation_effects_output", type=str, default="mutation_effects.csv", help="Output file name for mutation effects (default: mutation_effects.csv)")
 parser.add_argument("--pair_effects_output", type=str, default="mutation_pair_effects.csv", help="Output file name for pair effects (default: mutation_pair_effects.csv)")
+parser.add_argument("--model", type=str, required=True, choices=["togethercomputer/evo-1-131k-base", "togethercomputer/evo-1-8k-base"], help="Evo model checkpoint to use")
 
 args = parser.parse_args()
 
@@ -23,14 +25,15 @@ end_residue = int(interval[1])
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the model and tokenizer
-model_name = "kuleshov-group/caduceus-ps_seqlen-131k_d_model-256_n_layer-16"
-tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-model = AutoModelForMaskedLM.from_pretrained(model_name, trust_remote_code=True)
+model_name = args.model
+config = AutoConfig.from_pretrained(model_name, trust_remote_code=True, revision="1.1_fix")
+model = AutoModelForCausalLM.from_pretrained(model_name, config=config, trust_remote_code=True, revision="1.1_fix")
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, revision="1.1_fix")
 model.to(device)
 
 def process_sequence(dna_sequence, sequence_id, start_residue, end_residue):
     """
-    Process a DNA sequence using the Caduceus model.
+    Process a DNA sequence using the Evo model.
 
     Args:
         dna_sequence (str): The DNA sequence to process.
@@ -61,16 +64,12 @@ def process_sequence(dna_sequence, sequence_id, start_residue, end_residue):
 
     # Calculate LLRs for each position and DNA base
     for position in range(1, sequence_length + 1):
-        # Mask the target position
-        masked_input_ids = input_ids.clone()
-        masked_input_ids[0, position] = tokenizer.mask_token_id
-        
-        # Get logits for the masked token
+        # Get logits for the target position
         with torch.no_grad():
-            logits = model(masked_input_ids).logits
-            
+            logits = model(input_ids[:, :position + 1]).logits
+        
         # Calculate log probabilities
-        probabilities = torch.nn.functional.softmax(logits[0, position], dim=0)
+        probabilities = torch.nn.functional.softmax(logits[0, -1], dim=0)
         log_probabilities = torch.log(probabilities)
         
         # Get the log probability of the wild-type base
@@ -164,4 +163,4 @@ df_pairs.to_csv(args.pair_effects_output, index=False)
 print(f"Processing complete. Results saved to '{args.mutation_effects_output}' and '{args.pair_effects_output}'.")
 
 # Example usage:
-# python ./scripts/dna_mutation_pairs_fasta.py --interval [1-100] --fasta_file "./data/Homo_sapiens_BRAF_sequence.fa" --mutation_effects_output "./outputs/dna_mutation_effects.csv" --pair_effects_output "./outputs/dna_pair_effects.csv"
+# python ./scripts/evo_mutation_pairs_fasta.py --interval [1-100] --fasta_file "./data/Homo_sapiens_BRAF_sequence.fa" --mutation_effects_output "./outputs/evo_mutation_effects.csv" --pair_effects_output "./outputs/evo_pair_effects.csv" --model togethercomputer/evo-1-131k-base

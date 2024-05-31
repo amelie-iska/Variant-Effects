@@ -1,0 +1,21 @@
+Sequence_ID,Pair,Sum LLR,Type
+7,T41G - C98T,2.984375,Beneficial
+7,T38G - C98T,3.01953125,Beneficial
+7,C96T - C98T,3.03125,Beneficial
+7,G91A - C98T,3.1171875,Beneficial
+7,T36A - C98T,3.2109375,Beneficial
+7,C21A - C98T,3.21875,Beneficial
+7,G25C - T36T,3.2734375,Beneficial
+7,G25T - C98T,3.4140625,Beneficial
+7,T36T - C98T,3.5625,Beneficial
+7,G25C - C98T,4.0546875,Beneficial
+7,C37A - T43A,-6.34375,Deleterious
+7,C22A - C37A,-5.91015625,Deleterious
+7,C37A - A46G,-5.22265625,Deleterious
+7,C22A - T43A,-4.98046875,Deleterious
+7,C18C - C37A,-4.77734375,Deleterious
+7,C37A - A40G,-4.74609375,Deleterious
+7,C37A - T42C,-4.71484375,Deleterious
+7,T16A - C37A,-4.71484375,Deleterious
+7,C12C - C37A,-4.7109375,Deleterious
+7,C37A - G45C,-4.67578125,Deleterious
