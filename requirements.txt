@@ -35,3 +35,4 @@ wandb==0.13.5
 flash-attn==2.5.6
 causal-conv1d===1.2.0.post2
 mamba-ssm==1.2.0.post1
+stripedhyena==0.2.2
