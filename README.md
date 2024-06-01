@@ -83,6 +83,7 @@ Use `./scripts/protein_mut-pairs_uniprot.py` to run on protein sequences from th
 
 Use `./scripts/dna_mut-pairs_ensembl.py` to run on DNA sequences from the [Ensembl database](https://useast.ensembl.org/index.html) using the DNA sequence's name as input (ex: `ENSG00000157764`). 
 
+
 ## Compute LLR Heatmap and Mutation Pair Effects for Multiple Protein or DNA Sequences with a FASTA Input File
 
 To run predictions on multiple protein or DNA sequences stored in a FASTA file, use something like the following commands. 
@@ -119,9 +120,29 @@ The LLR heatmaps will be saved as a CSV to the location specified in the `--muta
 
 This model can be found on [HuggingFace here](https://huggingface.co/collections/kuleshov-group/caduceus-65dcb89b4f54e416ef61c350). The codebase can easily be adapted so that other versions of Caduceus can be used, but we currently only use the [most performant model](https://huggingface.co/kuleshov-group/caduceus-ps_seqlen-131k_d_model-256_n_layer-16). 
 
+## Using Evo
+You can now also use the "causal" or autoregressive DNA language model [Evo](https://github.com/evo-design/evo) now as well. Some care is recommended as some mistakes were found with Evo where incorrect permutations of some projections are computed. This is supposed to have been fixed in [this version on HuggingFace](https://huggingface.co/togethercomputer/evo-1-131k-base), which is what we use here. For single sequences, you can run: 
+
+```bash
+python ./scripts/evo_mutation_pairs_effects.py --model togethercomputer/evo-1-131k-base \
+    --dna-seq ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC \ 
+    --output-filename ./outputs/evo_heatmap.png
+```
+
+or, for multiple sequences you can run:
+
+```bash
+python ./scripts/evo_mutation_pairs_fasta.py --interval [1-100] \ 
+    --fasta_file "./data/Homo_sapiens_BRAF_sequence.fa" \ 
+    --mutation_effects_output "./outputs/evo_mutation_effects.csv" \ 
+    --pair_effects_output "./outputs/evo_pair_effects.csv" \ 
+    --model togethercomputer/evo-1-131k-base
+```
+Depending on your GPU, you may also want to use the smaller `togethercomputer/evo-1-8k-base` model.  
+
 ## Other Mutation Scoring Methods
 
-In [Language models enable zero-shot prediction of the effects of mutations on protein function](https://www.biorxiv.org/content/10.1101/2021.07.09.450648v2) several additional methods for scoring multiple mutations of a protein sequence were defined. Namely, the "masked-marginal", "wild-type marginal", and "pseudo-perplexity" were compared to one another. It appears as though the masked-marginal scoring method performed best, but [the implementation](https://github.com/facebookresearch/esm/blob/main/examples/variant-prediction/predict.py) may have errors. Here we provide versions of this script for use with ESM-2 and Caduceus but it is advised that you check for errors in the implementation. These scoring methods are intended to be slightly more robust at predicting the effects of multiple (simultaneous) epistatic mutations on a protein (with ESM-2) or on a DNA sequence (with Caduceus), but some of them may be more computationally expensive. 
+In [Language models enable zero-shot prediction of the effects of mutations on protein function](https://www.biorxiv.org/content/10.1101/2021.07.09.450648v2) several additional methods for scoring multiple mutations of a protein sequence were defined. Namely, the "masked-marginal", "wild-type marginal", and "pseudo-perplexity" were compared to one another. It appears as though the masked-marginal scoring method performed best, but here again, [the original implementation](https://github.com/facebookresearch/esm/blob/main/examples/variant-prediction/predict.py) may have errors. Here we provide versions of this script for use with ESM-2 and Caduceus but it is advised that you check for errors in the implementation. These scoring methods are intended to be slightly more robust at predicting the effects of multiple (simultaneous) epistatic mutations on a protein (with ESM-2) or on a DNA sequence (with Caduceus), but some of them may be more computationally expensive and slower. 
 
 ### For Proteins
 To run on a protein sequence use:
