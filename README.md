@@ -10,26 +10,25 @@ for predicting variant effects.
 
 ## Install
 
-First, clone the repository:
-```
-git clone https://github.com/amelie-iska/Variant-Effects.git
-```
-
 A modification of the Caduceus conda environment is used here. This is not strictly necessary as all models are run through the transformers library. So feel free to set up a simpler environment. Additionally, we plan to add a third, newer DNA language model once it is trained. 
 
-1. To begin, clone the repo. 
-2. Run the following to set up your conda or mamba environment:
+1. To begin, clone the repo.
+```bash 
+git clone https://github.com/amelie-iska/Variant-Effects.git
+``` 
+2. Change directories:
 ```bash
 cd Variant-Effects
 ```
+3. Run the following to set up your conda or mamba environment:
 ```bash
 conda env create -f caduceus.yml
 ```
-3. Activate the environment:
+4. Activate the environment:
 ```bash
 conda activate caduceus
 ```
-4. Next, run:
+5. Next, run:
 ```bash
 pip install -r requirements.txt
 ```
