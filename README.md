@@ -1,18 +1,27 @@
 # Variant Effects with Protein and DNA Language Models
 
-This repo contains several scripts for assessing the effects of single point mutations and pairs of mutations on protein sequences and DNA sequences using the HuggingFace Transformers library. We use the protein language model ESM-2 for proteins, and the DNA language model Caduceus for DNA. This expands on the methods used in the folowing two papers,
+This repo contains several scripts for assessing the effects of single point mutations and pairs of mutations on protein sequences and DNA sequences using the HuggingFace Transformers library. We use the protein language model ESM-2 for proteins, and the DNA language models Caduceus or Evo for DNA. This expands on the methods used in the folowing three papers,
 
 - [Genome-wide prediction of disease variant effects with a deep protein language model](https://www.nature.com/articles/s41588-023-01465-0)
-- [Caduceus: Bi-Directional Equivariant Long-Range DNA Sequence Modeling](https://arxiv.org/abs/2403.03234) 
+- [Caduceus: Bi-Directional Equivariant Long-Range DNA Sequence Modeling](https://arxiv.org/abs/2403.03234)
+- [Sequence modeling and design from molecular to genome scale with Evo](https://www.biorxiv.org/content/10.1101/2024.02.27.582234v1)
 
 for predicting variant effects. 
 
 ## Install
 
-A modification of the Caduceus conda environment is used here. 
+First, clone the repository:
+```
+git clone https://github.com/amelie-iska/Variant-Effects.git
+```
+
+A modification of the Caduceus conda environment is used here. This is not strictly necessary as all models are run through the transformers library. So feel free to set up a simpler environment. Additionally, we plan to add a third, newer DNA language model once it is trained. 
 
 1. To begin, clone the repo. 
 2. Run the following to set up your conda or mamba environment:
+```bash
+cd Variant-Effects
+```
 ```bash
 conda env create -f caduceus.yml
 ```
